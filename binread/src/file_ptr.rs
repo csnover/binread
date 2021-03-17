@@ -75,7 +75,7 @@ pub type FilePtr128<T> = FilePtr<u128, T>;
 impl<Ptr: BinRead<Args = ()> + IntoSeekFrom, BR: BinRead> BinRead for FilePtr<Ptr, BR> {
     type Args = BR::Args;
 
-    fn read_options<R: Read + Seek>(reader: &mut R, options: &ReadOptions, _: Self::Args) -> BinResult<Self> {
+    fn read_options<R: Read + Seek>(reader: &mut R, options: &ReadOptions, _: &Self::Args) -> BinResult<Self> {
         #[cfg(feature = "debug_template")]
         let options = &{
             let mut options = *options;
@@ -102,12 +102,12 @@ impl<Ptr: BinRead<Args = ()> + IntoSeekFrom, BR: BinRead> BinRead for FilePtr<Pt
         };
 
         Ok(FilePtr{
-            ptr: Ptr::read_options(reader, options, ())?,
+            ptr: Ptr::read_options(reader, options, &())?,
             value: None
         })
     }
 
-    fn after_parse<R>(&mut self, reader: &mut R, ro: &ReadOptions, args: BR::Args)-> BinResult<()>
+    fn after_parse<R>(&mut self, reader: &mut R, ro: &ReadOptions, args: &BR::Args)-> BinResult<()>
         where R: Read + Seek,
     {
         let relative_to = ro.offset;
@@ -132,7 +132,7 @@ impl<Ptr: BinRead<Args = ()> + IntoSeekFrom, BR: BinRead> FilePtr<Ptr, BR> {
     pub fn parse<R: Read + Seek>(
         reader: &mut R,
         options: &ReadOptions,
-        args: BR::Args
+        args: &BR::Args
     ) -> BinResult<BR>
     {
         let mut ptr: Self = Self::read_options(reader, options, args)?;

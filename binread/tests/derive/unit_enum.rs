@@ -54,12 +54,12 @@ fn unit_enum_magic_pre_assert() {
         OtherZero,
     }
 
-    assert_eq!(Test::read_args(&mut Cursor::new(b"\0\0"), (true, false)).unwrap(), Test::Zero);
+    assert_eq!(Test::read_args(&mut Cursor::new(b"\0\0"), &(true, false)).unwrap(), Test::Zero);
     // Tests allow_zero condition actually applies
-    assert_eq!(Test::read_args(&mut Cursor::new(b"\0\0"), (true, true)).unwrap(), Test::OtherZero);
+    assert_eq!(Test::read_args(&mut Cursor::new(b"\0\0"), &(true, true)).unwrap(), Test::OtherZero);
     // Tests forbid_zero condition actually applies
-    assert_eq!(Test::read_args(&mut Cursor::new(b"\0\0"), (false, true)).unwrap(), Test::OtherZero);
-    let error = Test::read_args(&mut Cursor::new(b"\0\x01"), (false, true)).expect_err("accepted bad data");
+    assert_eq!(Test::read_args(&mut Cursor::new(b"\0\0"), &(false, true)).unwrap(), Test::OtherZero);
+    let error = Test::read_args(&mut Cursor::new(b"\0\x01"), &(false, true)).expect_err("accepted bad data");
     assert!(matches!(error, binread::Error::NoVariantMatch { .. }));
 }
 

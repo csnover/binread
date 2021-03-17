@@ -12,7 +12,7 @@ use core::num::{NonZeroU8, NonZeroU16};
 impl BinRead for Vec<NonZeroU8> {
     type Args = ();
 
-    fn read_options<R: Read + Seek>(reader: &mut R, _: &ReadOptions, _: Self::Args) -> BinResult<Self>
+    fn read_options<R: Read + Seek>(reader: &mut R, _: &ReadOptions, _: &Self::Args) -> BinResult<Self>
     {
         reader
             .bytes()
@@ -121,13 +121,13 @@ impl From<NullString> for Vec<u8> {
 impl BinRead for Vec<NonZeroU16> {
     type Args = ();
 
-    fn read_options<R: Read + Seek>(reader: &mut R, options: &ReadOptions, _: Self::Args)
+    fn read_options<R: Read + Seek>(reader: &mut R, options: &ReadOptions, _: &Self::Args)
         -> BinResult<Self>
     {
         let mut values = vec![];
 
         loop {
-            let val = <u16>::read_options(reader, options, ())?;
+            let val = <u16>::read_options(reader, options, &())?;
             if val == 0 {
                 return Ok(values)
             }
@@ -139,7 +139,7 @@ impl BinRead for Vec<NonZeroU16> {
 impl BinRead for NullWideString {
     type Args = ();
 
-    fn read_options<R: Read + Seek>(reader: &mut R, options: &ReadOptions, args: Self::Args)
+    fn read_options<R: Read + Seek>(reader: &mut R, options: &ReadOptions, args: &Self::Args)
         -> BinResult<Self>
     {
         #[cfg(feature = "debug_template")]
@@ -172,7 +172,7 @@ impl BinRead for NullWideString {
 impl BinRead for NullString {
     type Args = ();
 
-    fn read_options<R: Read + Seek>(reader: &mut R, options: &ReadOptions, args: Self::Args)
+    fn read_options<R: Read + Seek>(reader: &mut R, options: &ReadOptions, args: &Self::Args)
         -> BinResult<Self>
     {
         #[cfg(feature = "debug_template")] {

@@ -32,7 +32,7 @@ fn generate_unit_enum_repr(input: &Input, repr: &TokenStream, variants: &[UnitEn
 
     quote! {
         #prelude
-        let #TEMP: #repr = #READ_METHOD(#READER, #OPT, ())?;
+        let #TEMP: #repr = #READ_METHOD(#READER, #OPT, &())?;
         #(#clauses else)* {
             Err(#BIN_ERROR::NoVariantMatch {
                 pos: #POS,
@@ -67,7 +67,7 @@ fn generate_unit_enum_magic(input: &Input, en: &UnitOnlyEnum, variants: &[UnitEn
 
     quote! {
         #prelude
-        match #amp#READ_METHOD(#READER, #OPT, ())? {
+        match #amp#READ_METHOD(#READER, #OPT, &())? {
             #(#matches,)*
             _ => Err(#BIN_ERROR::NoVariantMatch { pos: #POS })
         }

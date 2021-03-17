@@ -155,7 +155,7 @@ impl <'field> AfterParseGenerator<'field> {
         let handle_error = debug_template::handle_error();
         let value = self.out;
         self.out = quote! {
-            #after_parse_fn(#value, #READER, #options_var, #args_var.clone())#handle_error?;
+            #after_parse_fn(#value, #READER, #options_var, &#args_var)#handle_error?;
         };
 
         self
@@ -327,7 +327,7 @@ impl <'field> FieldGenerator<'field> {
                 self.emit_options_vars = true;
 
                 quote! {
-                    #read_method(#READER, #options_var, #args_var.clone())
+                    #read_method(#READER, #options_var, &#args_var)
                 }
             }
         };

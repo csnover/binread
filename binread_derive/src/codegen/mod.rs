@@ -32,7 +32,7 @@ pub(crate) fn generate_impl(derive_input: &syn::DeriveInput, binread_input: &Par
             type Args = #arg_type;
 
             fn read_options<R: #READ_TRAIT + #SEEK_TRAIT>
-                (#READER: &mut R, #OPT: &#OPTIONS, #ARGS: Self::Args)
+                (#READER: &mut R, #OPT: &#OPTIONS, #ARGS: &Self::Args)
                 -> #BIN_RESULT<Self>
             {
                 #read_opt_impl

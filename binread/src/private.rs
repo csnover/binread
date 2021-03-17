@@ -37,11 +37,10 @@ pub fn try_after_parse<Reader, ValueType, ArgType>(
     item: &mut Option<ValueType>,
     reader: &mut Reader,
     ro: &ReadOptions,
-    args: ArgType,
+    args: &ArgType,
 ) -> BinResult<()>
     where Reader: io::Read + io::Seek,
           ValueType: BinRead<Args = ArgType>,
-          ArgType: Copy + 'static,
 {
     if let Some(value) = item.as_mut() {
         value.after_parse(reader, ro, args)?;

@@ -21,12 +21,12 @@ fn all_the_things() {
         calc_test: u32
     }
 
-    fn read_offsets<R: Read + Seek>(reader: &mut R, ro: &ReadOptions, _: ())
+    fn read_offsets<R: Read + Seek>(reader: &mut R, ro: &ReadOptions, _: &())
         -> BinResult<(u16, u16)>
     {
         Ok((
-            u16::read_options(reader, ro, ())?,
-            u16::read_options(reader, ro, ())?
+            u16::read_options(reader, ro, &())?,
+            u16::read_options(reader, ro, &())?
         ))
     }
 
@@ -180,9 +180,9 @@ fn if_alternate() {
         a: u8,
     }
 
-    let result = Test::read_args(&mut Cursor::new(b"\x01"), (true, )).unwrap();
+    let result = Test::read_args(&mut Cursor::new(b"\x01"), &(true, )).unwrap();
     assert_eq!(result.a, 1);
-    let result = Test::read_args(&mut Cursor::new(b"\x01"), (false, )).unwrap();
+    let result = Test::read_args(&mut Cursor::new(b"\x01"), &(false, )).unwrap();
     assert_eq!(result.a, 10);
 }
 

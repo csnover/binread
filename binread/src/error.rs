@@ -1,4 +1,5 @@
 //! Error types and internal error handling functions
+use core::any::Any;
 use super::*;
 
 /// An error while parsing a BinRead type
@@ -88,7 +89,7 @@ where
         options.variable_name = Some("magic");
         options
     };
-    let val = B::read_options(reader, &options, ())?;
+    let val = B::read_options(reader, &options, &())?;
     if val == expected {
         Ok(())
     } else {
@@ -128,7 +129,7 @@ where
 pub fn read_options_then_after_parse<Args, T, R>(
     reader: &mut R,
     ro: &ReadOptions,
-    args: T::Args,
+    args: &T::Args,
 ) -> BinResult<T>
     where Args: Copy + 'static,
           T: BinRead<Args = Args>,

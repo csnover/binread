@@ -23,7 +23,7 @@ pub struct PosValue<T> {
 impl<T: BinRead> BinRead for PosValue<T> {
     type Args = T::Args;
 
-    fn read_options<R: Read + Seek>(reader: &mut R, options: &ReadOptions, args: T::Args)
+    fn read_options<R: Read + Seek>(reader: &mut R, options: &ReadOptions, args: &T::Args)
         -> BinResult<Self>
     {
         let pos = reader.seek(SeekFrom::Current(0))?;
@@ -34,7 +34,7 @@ impl<T: BinRead> BinRead for PosValue<T> {
         })
     }
 
-    fn after_parse<R: Read + Seek>(&mut self, reader: &mut R, options: &ReadOptions, args: Self::Args)
+    fn after_parse<R: Read + Seek>(&mut self, reader: &mut R, options: &ReadOptions, args: &Self::Args)
         -> BinResult<()>
     {
         self.val.after_parse(reader, options, args)

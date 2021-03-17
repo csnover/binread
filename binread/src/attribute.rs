@@ -93,7 +93,7 @@
 //! let mut options = ReadOptions::default();
 //! options.endian = Endian::Big; // ← this will be ignored
 //! # assert_eq!(
-//! Child::read_options(&mut Cursor::new(b"\x01\0\0\0"), &options, ())
+//! Child::read_options(&mut Cursor::new(b"\x01\0\0\0"), &options, &())
 //! # .unwrap(), Child(1));
 //! ```
 //!
@@ -611,7 +611,7 @@
 //! ```
 //! # use binread::{prelude::*, io::*, ReadOptions};
 //! # use std::collections::HashMap;
-//! fn custom_parser<R: Read + Seek>(reader: &mut R, ro: &ReadOptions, _: ())
+//! fn custom_parser<R: Read + Seek>(reader: &mut R, ro: &ReadOptions, _: &())
 //!     -> BinResult<HashMap<u16, u16>>
 //! {
 //!     let mut map = HashMap::new();
