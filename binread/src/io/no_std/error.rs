@@ -1,8 +1,8 @@
+use core::fmt;
+
 pub struct Error {
     repr: Repr
 }
-
-use core::fmt;
 
 impl fmt::Debug for Error {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
