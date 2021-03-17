@@ -1,4 +1,6 @@
 //! Error types and internal error handling functions
+
+use core::any::Any;
 use super::*;
 
 /// An error while parsing a BinRead type
