@@ -1,13 +1,13 @@
-use crate::parser::{KeywordToken, TrySet, attrs};
+use crate::parser::{KeywordToken, TrySet, attrs, meta_types::IdentPat};
 use proc_macro2::TokenStream;
-use syn::{Ident, Type};
+use syn::Type;
 use quote::{ToTokens, quote};
 
 #[derive(Debug, Clone)]
 pub(crate) enum Imports {
     None,
-    List(Vec<Ident>, Vec<Type>),
-    Tuple(Ident, Box<Type>)
+    List(Vec<IdentPat>, Vec<Type>),
+    Tuple(IdentPat, Box<Type>)
 }
 
 impl Default for Imports {
@@ -26,12 +26,12 @@ impl Imports {
                 } else {
                     let idents = idents.iter();
                     Some(quote! {
-                        (#(mut #idents,)*)
+                        (#(#idents,)*)
                     })
                 }
             },
             Imports::Tuple(ident, _) => Some(quote! {
-                mut #ident
+                #ident
             })
         }
     }

@@ -46,7 +46,7 @@ fn all_the_things() {
         #[br(if(offsets.0 == 0x20))]
         name: Option<FilePtr<u32, NullString>>,
 
-        #[br(calc(extra_val))]
+        #[br(calc(*extra_val))]
         extra_val: u8,
     }
 
@@ -176,7 +176,7 @@ fn if_alternate() {
     #[derive(BinRead, Debug)]
     #[br(import(try_read: bool))]
     struct Test {
-        #[br(if(try_read, 10))]
+        #[br(if(*try_read, 10))]
         a: u8,
     }
 

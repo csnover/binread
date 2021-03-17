@@ -99,13 +99,39 @@ impl <Keyword: syn::token::Token + KeywordToken, ItemType> KeywordToken for Meta
     }
 }
 
+#[derive(Debug, Clone)]
+pub(crate) enum IdentPat {
+    Ident(syn::PatIdent),
+    Wild(syn::PatWild),
+}
+
+impl Parse for IdentPat {
+    fn parse(input: ParseStream<'_>) -> syn::Result<Self> {
+        input.parse::<syn::Pat>()
+            .and_then(|pat| match pat {
+                syn::Pat::Ident(ident) => Ok(Self::Ident(ident)),
+                syn::Pat::Wild(wild) => Ok(Self::Wild(wild)),
+                _ => Err(input.error("expected ident")),
+            })
+    }
+}
+
+impl ToTokens for IdentPat {
+    fn to_tokens(&self, tokens: &mut TokenStream) {
+        match self {
+            IdentPat::Ident(ident) => ident.to_tokens(tokens),
+            IdentPat::Wild(wild) => wild.to_tokens(tokens),
+        }
+    }
+}
+
 // This is like `syn::PatType` except:
 // (1) Implements `Parse`;
 // (2) No attributes;
-// (3) Only allows an ident on the LHS instead of any `syn::Pat`.
+// (3) Only allows an ident or wildcard on the LHS instead of any `syn::Pat`.
 #[derive(Debug, Clone)]
 pub(crate) struct IdentPatType {
-    pub(crate) ident: syn::Ident,
+    pub(crate) ident: IdentPat,
     pub(crate) colon_token: Token![:],
     pub(crate) ty: syn::Type
 }

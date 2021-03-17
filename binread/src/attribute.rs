@@ -270,8 +270,8 @@
 //! #[derive(BinRead, Debug, PartialEq)]
 //! #[br(import(ty: u8))]
 //! enum Command {
-//!     #[br(pre_assert(ty == 0))] Variant0(u16, u16),
-//!     #[br(pre_assert(ty == 1))] Variant1(u32)
+//!     #[br(pre_assert(*ty == 0))] Variant0(u16, u16),
+//!     #[br(pre_assert(*ty == 1))] Variant1(u32)
 //! }
 //!
 //! #[derive(BinRead, Debug, PartialEq)]
