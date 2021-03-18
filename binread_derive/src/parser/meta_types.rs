@@ -1,16 +1,40 @@
 use proc_macro2::TokenStream;
 use quote::ToTokens;
 use super::KeywordToken;
-use syn::{Expr, Lit, Token, Type, parenthesized, parse::{Parse, ParseStream}, punctuated::Punctuated, token};
+use syn::{Expr, Lit, Token, Type, fold::Fold, parenthesized, parse::{Parse, ParseStream}, punctuated::Punctuated, token};
 
 type Fields<T> = Punctuated<T, Token![,]>;
+
+struct StripHygiene;
+
+impl Fold for StripHygiene {
+    fn fold_ident(&mut self, mut node: syn::Ident) -> syn::Ident {
+        node.set_span(node.span().resolved_at(proc_macro2::Span::call_site()));
+        node
+    }
+}
+
+pub(crate) struct UnhygienicExpr(pub Expr);
+
+impl Parse for UnhygienicExpr {
+    fn parse(input: ParseStream<'_>) -> syn::Result<Self> {
+        let expr = Expr::parse(input)?;
+        Ok(Self(StripHygiene.fold_expr(expr)))
+    }
+}
+
+impl ToTokens for UnhygienicExpr {
+    fn to_tokens(&self, tokens: &mut TokenStream) {
+        self.0.to_tokens(tokens)
+    }
+}
 
 /// `MetaExpr` represents a key/expr pair
 /// Takes two forms:
 /// * ident(expr)
 /// * ident = expr
 /// both are always allowed
-pub(crate) type MetaExpr<Keyword> = MetaValue<Keyword, Expr>;
+pub(crate) type MetaExpr<Keyword> = MetaValue<Keyword, UnhygienicExpr>;
 
 /// `MetaType` represents a key/ty pair
 /// Takes two forms:

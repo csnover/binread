@@ -211,6 +211,70 @@ fn ignore_and_default() {
 }
 
 #[test]
+fn macro_hygiene() {
+    #[macro_export]
+    macro_rules! make_struct {
+        (@entry {
+            $(,)?
+        } -> { $($output:tt)* }
+        ) => {
+            make_struct! { @write { $($output)* } }
+        };
+
+        (@entry {
+            $entry_ident:ident : $entry_ty:ty $(, $($tail:tt)*)?
+        } -> { $($output:tt)* }
+        ) => {
+            make_struct! { @entry { $($($tail)*)? } -> {
+                $($output)*
+                // Due to macro hygiene, when emitted by codegen, this ident `a`
+                // will exist in a different namespace than the ident `a` in the
+                // entry point rule, and so will fail to resolve, unless
+                // binread_derive resets the namespaces so that they match
+                #[br(calc(a))]
+                $entry_ident: $entry_ty;
+            } }
+        };
+
+        (@write {
+            $(#[$meta:meta])* $vis:vis struct $ident:ident;
+            $($(#[$field_meta:meta])* $field_ident:ident : $field_ty:ty;)*
+        }) => {
+            $(#[$meta])*
+            #[derive(binread::BinRead)]
+            $vis struct $ident {
+                $($(#[$field_meta])* $field_ident: $field_ty),*
+            }
+        };
+
+        (
+            $(#[$meta:meta])*
+            $vis:vis struct $ident:ident {
+                $($tail:tt)*
+            }
+        ) => {
+            // This recursive macro call creates a new call site, so idents
+            // in the @entry rule will have a different namespace due to macro
+            // hygiene
+            make_struct! { @entry { $($tail)* } -> {
+                $(#[$meta])* $vis struct $ident;
+                a: u8;
+            } }
+        };
+    }
+
+    make_struct! {
+        #[derive(Debug, PartialEq)]
+        struct Test {
+            b: u8,
+        }
+    };
+
+    let result = Test::read(&mut Cursor::new(b"\x02")).unwrap();
+    assert_eq!(result, Test { a: 2, b: 2 });
+}
+
+#[test]
 fn magic_byte() {
     #[derive(BinRead, Debug)]
     #[br(magic = b'a')]

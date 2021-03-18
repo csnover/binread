@@ -80,8 +80,15 @@ impl FromField for StructField {
     type In = syn::Field;
 
     fn from_field(field: &Self::In, index: usize) -> ParseResult<Self> {
+        let ident = field.ident.clone().map_or_else(
+            || quote::format_ident!("self_{}", index),
+            |mut ident| {
+                ident.set_span(ident.span().resolved_at(proc_macro2::Span::call_site()));
+                ident
+            });
+
         let result = Self::set_from_attrs(Self {
-            ident: field.ident.clone().unwrap_or_else(|| quote::format_ident!("self_{}", index)),
+            ident,
             generated_ident: field.ident.is_none(),
             ty: field.ty.clone(),
             endian: <_>::default(),

@@ -1,5 +1,5 @@
 use core::convert::TryFrom;
-use crate::parser::attrs;
+use crate::parser::{attrs, meta_types::UnhygienicExpr};
 use proc_macro2::TokenStream;
 use quote::{ToTokens, quote};
 use syn::{Expr, ExprLit, Lit, parse::Parse, spanned::Spanned};
@@ -32,7 +32,7 @@ impl <K: Parse + Spanned> TryFrom<attrs::AssertLike<K>> for Assert {
         };
 
         let consequent = match args.next() {
-            Some(Expr::Lit(ExprLit { lit: Lit::Str(message), .. })) => {
+            Some(UnhygienicExpr(Expr::Lit(ExprLit { lit: Lit::Str(message), .. }))) => {
                 Some(Error::Message(quote! {
                     extern crate alloc;
                     alloc::format!(#message #(, #args)*)

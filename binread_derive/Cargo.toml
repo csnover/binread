@@ -12,7 +12,7 @@ proc-macro = true
 
 [dependencies]
 either = "1.6"
-syn = { version = "1", features = ["extra-traits", "full"] }
+syn = { version = "1", features = ["extra-traits", "fold", "full"] }
 quote = "1"
 proc-macro2 = "1"
 

@@ -17,7 +17,11 @@ pub fn derive_binread_trait(input: TokenStream) -> TokenStream {
 
 fn derive_binread_internal(input: DeriveInput) -> proc_macro2::TokenStream {
     let binread_input = Input::from_input(&input);
-    generate_impl(&input, &binread_input)
+    let result = generate_impl(&input, &binread_input);
+    // if input.ident == "HygieneTest" {
+    //     eprintln!("{:#?}", result);
+    // }
+    result
 }
 
 #[proc_macro_attribute]
