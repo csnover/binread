@@ -1,0 +1,8 @@
+[no_features]
+features = ""
+
+[default_features]
+features = "default"
+
+[all_features]
+features = "default debug_template"
