@@ -118,6 +118,8 @@ impl<T: BinRead, P: BinRead> core::ops::DerefMut for Punctuated<T, P> {
 
 #[cfg(test)]
 mod tests {
+    #[cfg(not(feature = "std"))]
+    use alloc::format;
     use super::*;
     use crate as binread;
 

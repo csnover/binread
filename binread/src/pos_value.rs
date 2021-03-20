@@ -78,6 +78,8 @@ impl<U, T: PartialEq<U>> PartialEq<U> for PosValue<T> {
 
 #[cfg(test)]
 mod tests {
+    #[cfg(not(feature = "std"))]
+    use alloc::format;
     use crate as binread;
 
     #[test]
