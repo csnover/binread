@@ -89,16 +89,14 @@ impl <'input> StructGenerator<'input> {
     }
 
     pub(super) fn wrap_debug(mut self, ident: &Ident) -> Self {
-        if cfg!(feature = "debug_template") {
-            let debug_tpl_start = debug_template::start(&ident);
-            let debug_tpl_end = debug_template::end();
-            let body = self.out;
-            self.out = quote! {
-                #debug_tpl_start
-                #body
-                #debug_tpl_end
-            };
-        }
+        let debug_tpl_start = debug_template::start(&ident);
+        let debug_tpl_end = debug_template::end();
+        let body = self.out;
+        self.out = quote! {
+            #debug_tpl_start
+            #body
+            #debug_tpl_end
+        };
 
         self
     }

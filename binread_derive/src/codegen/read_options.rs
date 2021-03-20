@@ -231,14 +231,14 @@ impl ReadOptionsGenerator {
     }
 
     fn variable_name(mut self, ident: &Ident) -> Self {
-        if cfg!(feature = "debug_template") {
-            let ident = ident.to_string();
-            let head = self.out;
-            self.out = quote! {
-                #head
+        let ident = ident.to_string();
+        let head = self.out;
+        self.out = quote! {
+            #head
+            #[cfg(feature = "debug_template")] {
                 #TEMP.variable_name = Some(#ident);
-            };
-        }
+            }
+        };
 
         self
     }
