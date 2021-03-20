@@ -125,7 +125,6 @@ extern crate alloc;
 use alloc::{
     boxed::Box,
     vec::Vec,
-    string::String,
 };
 
 #[doc(hidden)]
