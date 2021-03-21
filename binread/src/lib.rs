@@ -189,9 +189,6 @@ pub trait BinRead: Sized {
     type Args: Clone;
 
     /// Read the type from the reader while assuming no arguments have been passed
-    ///
-    /// # Panics
-    /// Panics if there is no [`args_default`](BinRead::args_default) implementation
     fn read<R: Read + Seek>(reader: &mut R) -> BinResult<Self> where Self::Args: Default {
         Self::read_options(reader, &ReadOptions::default(), Self::Args::default())
     }
